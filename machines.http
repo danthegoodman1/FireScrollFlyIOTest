@@ -1,0 +1,112 @@
+### Create a machine
+POST https://api.machines.dev/v1/apps/firescroll-test/machines
+Content-Type: application/json
+Authorization: Bearer xxx
+
+{
+  "name": "fs-solo-test",
+  "config": {
+    "image": "ghcr.io/danthegoodman1/firescroll:v0.1.3",
+    "size": "performance-4x",
+    "env": {
+      "DEBUG": "1",
+      "PRETTY": "1",
+      "NAMESPACE": "testns",
+      "REPLICA_GROUP":"testrg",
+      "INSTANCE_ID": "testinstance",
+      "PARTITIONS": "3",
+      "KAFKA_SEEDS": "165.227.176.159:19092"
+    },
+    "services": [
+      {
+        "ports": [
+          {
+            "port": 80,
+            "handlers": ["http"]
+          }
+        ],
+        "protocol" : "tcp",
+        "internal_port" : 8190
+      }
+    ],
+    "mounts": [
+      {
+        "path": "/var/firescroll/dbs",
+        "volume": "vol_0enxv30don1v8okp"
+      }
+    ]
+  }
+}
+
+### List machines
+GET https://api.machines.dev/v1/apps/firescroll-test/machines
+Authorization: Bearer xxx
+
+### Update the first machine for the seeds
+POST https://api.machines.dev/v1/apps/firescroll-test/machines/32874e1dc11785
+Content-Type: application/json
+Authorization: Bearer xxx
+
+{
+  "name": "scylla-0",
+  "config": {
+    "image": "registry.fly.io/firescroll-test:5.2v9",
+    "size": "performance-4x",
+    "env": {
+      "SEEDS": "fdaa:1:e6d1:a7b:15f:f165:d3d4:2,fdaa:1:e6d1:a7b:15e:46c7:cdde:2",
+      "SMP": "2",
+      "MEM": "6G",
+      "OVERPROV": "1",
+      "API_ADDR": "::",
+      "ADV_ADDR": "fdaa:1:e6d1:a7b:15f:f165:d3d4:2"
+    },
+    "services": [
+      {
+        "ports": [
+          {
+            "port": 9160
+          }
+        ],
+        "protocol": "tcp",
+        "internal_port": 9160
+      },
+      {
+        "ports": [
+          {
+            "port": 9042
+          }
+        ],
+        "protocol": "tcp",
+        "internal_port": 9042
+      },
+      {
+        "ports": [
+          {
+            "port": 10000
+          }
+        ],
+        "protocol": "tcp",
+        "internal_port": 10000
+      },
+      {
+        "ports": [
+          {
+            "port": 9142
+          }
+        ],
+        "protocol": "tcp",
+        "internal_port": 9142
+      }
+    ]
+  }
+}
+
+### Start the first machine
+POST https://api.machines.dev/v1/apps/firescroll-test/machines/32874e1dc11785/start
+Content-Type: application/json
+Authorization: Bearer xxx
+
+### Start the second machine
+POST https://api.machines.dev/v1/apps/firescroll-test/machines/4d891407f20787/start
+Content-Type: application/json
+Authorization: Bearer xxx

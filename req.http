@@ -1,0 +1,215 @@
+### Get ready status
+GET http://149.248.210.123/ready
+
+### Get metrics
+GET http://149.248.210.123:8191/metrics
+
+### Put records
+POST http://149.248.210.123/records/put
+Content-Type: application/json
+
+{
+  "Records": [
+    {
+      "pk": "pk1",
+      "sk": "sk1",
+      "data": {
+        "hey": "ho"
+      }
+    },
+    {
+      "pk": "pk1",
+      "sk": "sk1_2",
+      "data": {
+        "hey": "ho"
+      }
+    },
+    {
+      "pk": "pk3",
+      "sk": "sk3",
+      "data": {
+        "lets": "go"
+      }
+    },
+    {
+      "pk": "pk3",
+      "sk": "sk3_1",
+      "data": {
+        "lets": "go"
+      }
+    },
+    {
+      "pk": "pk3",
+      "sk": "sk3_a",
+      "data": {
+        "lets": "go"
+      }
+    },
+    {
+      "pk": "pk3",
+      "sk": "sk3a",
+      "data": {
+        "lets": "go"
+      }
+    }
+  ]
+}
+
+### Get records (single partition)
+POST http://149.248.210.123/records/get
+Content-Type: application/json
+
+{
+  "Records": [
+    {
+      "pk": "pk1",
+      "sk": "sk1"
+    }
+  ]
+}
+
+### Get records (multiple partitions)
+POST http://149.248.210.123/records/get
+Content-Type: application/json
+
+{
+  "Records": [
+    {
+      "pk": "pk1",
+      "sk": "sk1"
+    },
+    {
+      "pk": "pk2",
+      "sk": "sk2"
+    },
+    {
+      "pk": "pk3",
+      "sk": "sk3"
+    }
+  ]
+}
+
+### List records (no offset)
+POST http://149.248.210.123/records/list
+Content-Type: application/json
+
+{
+  "pk": "pk3",
+  "limit": 1
+}
+
+### List records (with offset)
+POST http://149.248.210.123/records/list
+Content-Type: application/json
+
+{
+  "pk": "pk3",
+  "sk_prefix": "sk3"
+}
+
+### List records (with if, no stop so 2 records are returned)
+POST http://149.248.210.123/records/list
+Content-Type: application/json
+
+{
+  "pk": "pk3",
+  "sk_prefix": "sk3",
+  "if": "sk > \"sk3\" && sk not contains \"_a\""
+}
+
+### List records (with if and if_stop, so only one record returned)
+POST http://149.248.210.123/records/list
+Content-Type: application/json
+
+{
+  "pk": "pk3",
+  "sk_prefix": "sk3",
+  "if": "sk > \"sk3\" && sk not contains \"_a\"",
+  "if_stop": true
+}
+
+### Delete records
+POST http://149.248.210.123/records/delete
+Content-Type: application/json
+
+{
+  "Records": [
+    {
+      "pk": "pk1",
+      "sk": "sk1"
+    }
+  ]
+}
+
+### Put records with if condition (pk1 will update, not pk3)
+POST http://149.248.210.123/records/put
+Content-Type: application/json
+
+{
+  "Records": [
+    {
+      "pk": "pk1",
+      "sk": "sk1",
+      "data": {
+        "hey": "ho"
+      },
+      "if": "data.hey == \"ho\""
+    },
+    {
+      "pk": "pk3",
+      "sk": "sk3",
+      "data": {
+        "lets": "go"
+      },
+      "if": "data.hey == \"ho\""
+    }
+  ]
+}
+
+### Put records with BAD if condition (will fail)
+POST http://149.248.210.123/records/put
+Content-Type: application/json
+
+{
+  "Records": [
+    {
+      "pk": "pk1",
+      "sk": "sk1",
+      "data": {
+        "hey": "ho"
+      },
+      "if": "pk"
+    }
+  ]
+}
+
+### Put records only if it doesn't exist
+POST http://149.248.210.123/records/put
+Content-Type: application/json
+
+{
+  "Records": [
+    {
+      "pk": "pk1",
+      "sk": "sk1",
+      "data": {
+        "hey": "ho"
+      },
+      "if": "data == null"
+    }
+  ]
+}
+
+### Delete records if
+POST http://149.248.210.123/records/delete
+Content-Type: application/json
+
+{
+  "Records": [
+    {
+      "pk": "pk1",
+      "sk": "sk1",
+      "if": "_updated_at > 1"
+    }
+  ]
+}
